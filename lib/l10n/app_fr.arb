@@ -1,0 +1,6 @@
+{
+  "@@locale": "fr",
+  "@@context": "French translations",
+  "homeTitle": "Accueil",
+  "createQuizButton": "Créer un quiz"
+}
