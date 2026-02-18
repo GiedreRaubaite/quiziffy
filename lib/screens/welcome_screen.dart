@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quizzify_app/theme/app_theme.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class WelcomeScreen extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: const Icon(
@@ -58,13 +59,11 @@ class WelcomeScreen extends StatelessWidget {
 
               const Spacer(flex: 3),
 
-              // Sign In Button
+              // Get Started Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Navigate to sign in
-                  },
+                  onPressed: () => context.go('/home'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.tealGreen,
                     foregroundColor: Colors.white,
@@ -74,7 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   child: const Text(
-                    'Sign In / Sign Up',
+                    'Get Started',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -86,9 +85,7 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () {
-                    // Navigate to home screen as guest
-                  },
+                  onPressed: () => context.go('/home'),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: AppTheme.primaryBlue,
