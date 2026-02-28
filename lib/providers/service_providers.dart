@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/gemini_service.dart';
 import '../services/storage_service.dart';
 import '../services/pdf_export_service.dart';
-import '../services/file_reader_service.dart';
 
 final geminiServiceProvider = Provider<GeminiService>((ref) {
   return GeminiService();
@@ -15,8 +14,4 @@ final storageServiceProvider = Provider<StorageService>((ref) {
 
 final pdfExportServiceProvider = Provider<PdfExportService>((ref) {
   return PdfExportService();
-});
-
-final fileReaderServiceProvider = Provider<FileReaderService>((ref) {
-  return FileReaderService();
 });

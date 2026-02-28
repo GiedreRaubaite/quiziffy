@@ -5,7 +5,6 @@ import 'package:quizzify_app/theme/app_theme.dart' show AppTheme;
 import '../models/quiz_enums.dart';
 import '../providers/quiz_generation_provider.dart';
 import '../providers/quiz_taking_provider.dart';
-import '../providers/service_providers.dart';
 import '../shared/widgets/loading_overlay.dart';
 
 class CreateQuizScreen extends ConsumerStatefulWidget {
@@ -16,40 +15,44 @@ class CreateQuizScreen extends ConsumerStatefulWidget {
 }
 
 class _CreateQuizScreenState extends ConsumerState<CreateQuizScreen> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
   String _selectedQuizType = 'Multiple Choice';
   String _selectedDifficulty = 'Medium';
 
-  QuizType get _quizTypeEnum => QuizType.values.firstWhere(
-        (t) => t.displayName == _selectedQuizType,
-      );
+  QuizType get _quizTypeEnum =>
+      QuizType.values.firstWhere((t) => t.displayName == _selectedQuizType);
 
-  Difficulty get _difficultyEnum => Difficulty.values.firstWhere(
-        (d) => d.displayName == _selectedDifficulty,
-      );
+  Difficulty get _difficultyEnum =>
+      Difficulty.values.firstWhere((d) => d.displayName == _selectedDifficulty);
 
   @override
   void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
     _textController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleUpload() async {
-    final fileReader = ref.read(fileReaderServiceProvider);
-    final text = await fileReader.pickAndReadFile();
-    if (text != null) {
-      _textController.text = text;
-    }
-  }
-
   Future<void> _handleGenerate() async {
-    if (_textController.text.trim().isEmpty) {
+    if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter text or upload a file')),
+        const SnackBar(content: Text('Please enter a quiz title')),
       );
       return;
     }
-    await ref.read(quizGenerationProvider.notifier).generateQuiz(
+    if (_textController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter source text')));
+      return;
+    }
+    await ref
+        .read(quizGenerationProvider.notifier)
+        .generateQuiz(
+          title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
           sourceText: _textController.text,
           quizType: _quizTypeEnum,
           difficulty: _difficultyEnum,
@@ -71,9 +74,9 @@ class _CreateQuizScreenState extends ConsumerState<CreateQuizScreen> {
         },
         loading: () {},
         error: (e, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error generating quiz: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error generating quiz: $e')));
         },
       );
     });
@@ -96,9 +99,9 @@ class _CreateQuizScreenState extends ConsumerState<CreateQuizScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Input Section
+              // Title
               const Text(
-                'Enter Text or Upload File',
+                'Quiz Title',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -108,7 +111,67 @@ class _CreateQuizScreenState extends ConsumerState<CreateQuizScreen> {
 
               const SizedBox(height: 12),
 
-              // Text Input Field
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: TextField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    hintText: 'e.g. Biology Chapter 3',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(16),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Description
+              const Text(
+                'Description (optional)',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.primaryText,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: TextField(
+                  controller: _descriptionController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    hintText: 'e.g. Focus on cell division and mitosis',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(16),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Source Text
+              const Text(
+                'Source Text',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.primaryText,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -122,23 +185,6 @@ class _CreateQuizScreenState extends ConsumerState<CreateQuizScreen> {
                     hintText: 'Paste or type your text here...',
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Upload Document Button
-              ElevatedButton.icon(
-                onPressed: isLoading ? null : _handleUpload,
-                icon: const Icon(Icons.upload_file),
-                label: const Text('Upload Document'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.tealGreen,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
@@ -220,8 +266,7 @@ class _CreateQuizScreenState extends ConsumerState<CreateQuizScreen> {
                     isExpanded: true,
                     items: const [
                       DropdownMenuItem(value: 'Easy', child: Text('Easy')),
-                      DropdownMenuItem(
-                          value: 'Medium', child: Text('Medium')),
+                      DropdownMenuItem(value: 'Medium', child: Text('Medium')),
                       DropdownMenuItem(value: 'Hard', child: Text('Hard')),
                     ],
                     onChanged: isLoading

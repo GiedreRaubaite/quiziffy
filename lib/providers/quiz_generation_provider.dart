@@ -8,6 +8,8 @@ class QuizGenerationNotifier extends AsyncNotifier<Quiz?> {
   Future<Quiz?> build() async => null;
 
   Future<void> generateQuiz({
+    required String title,
+    String description = '',
     required String sourceText,
     required QuizType quizType,
     required Difficulty difficulty,
@@ -17,6 +19,8 @@ class QuizGenerationNotifier extends AsyncNotifier<Quiz?> {
     state = await AsyncValue.guard(() async {
       final gemini = ref.read(geminiServiceProvider);
       return gemini.generateQuiz(
+        title: title,
+        description: description,
         sourceText: sourceText,
         quizType: quizType,
         difficulty: difficulty,

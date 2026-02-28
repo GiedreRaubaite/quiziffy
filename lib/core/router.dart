@@ -17,5 +17,9 @@ final GoRouter router = GoRouter(
       path: '/quiz-result',
       builder: (context, state) => const QuizResultScreen(),
     ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
   ],
 );

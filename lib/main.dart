@@ -1,4 +1,3 @@
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,10 +17,6 @@ void main() async {
   // Initialize Isar
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(DbSchemas.allSchemas, directory: dir.path);
-
-  final model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-2.5-flash',
-  );
 
   // Initialize storage
   final storageService = StorageService(isar);

@@ -18,8 +18,7 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: AppTheme.tealGreen,
         title: const Text('Quizify AI'),
-        leading: IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
-        actions: [IconButton(icon: const Icon(Icons.home), onPressed: () {})],
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,23 +97,22 @@ class HomeScreen extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
-            // Bottom Options
-            _buildOptionCard(
-              context,
-              icon: Icons.star_outline,
-              title: 'Upgrade to Pro',
-              color: AppTheme.tealGreen,
-              onTap: () {},
-            ),
-
-            const SizedBox(height: 12),
+            // TODO: Implement Upgrade to Pro feature
+            // _buildOptionCard(
+            //   context,
+            //   icon: Icons.star_outline,
+            //   title: 'Upgrade to Pro',
+            //   color: AppTheme.tealGreen,
+            //   onTap: () {},
+            // ),
+            // const SizedBox(height: 12),
 
             _buildOptionCard(
               context,
               icon: Icons.settings,
               title: 'Settings',
               color: AppTheme.tealGreen,
-              onTap: () {},
+              onTap: () => context.go('/settings'),
             ),
           ],
         ),

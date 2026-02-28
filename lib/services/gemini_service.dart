@@ -1,39 +1,40 @@
 import 'dart:convert';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:uuid/uuid.dart';
 import '../models/quiz.db.dart';
 import '../models/question.db.dart';
 import '../models/answer.db.dart';
 import '../models/quiz_enums.dart';
-import '../core/constants.dart';
 
 class GeminiService {
   late final GenerativeModel _model;
   final _uuid = const Uuid();
 
   GeminiService() {
-    _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
-      apiKey: AppConstants.geminiApiKey,
+    _model = FirebaseAI.googleAI().generativeModel(
+      model: 'gemini-2.0-flash',
       generationConfig: GenerationConfig(responseMimeType: 'application/json'),
     );
   }
 
   Future<Quiz> generateQuiz({
+    required String title,
+    String description = '',
     required String sourceText,
     required QuizType quizType,
     required Difficulty difficulty,
     int questionCount = 5,
   }) async {
     final prompt = _buildPrompt(
+      title: title,
+      description: description,
       sourceText: sourceText,
       quizType: quizType,
       difficulty: difficulty,
       questionCount: questionCount,
     );
 
-    final content = [Content.text(prompt)];
-    final response = await _model.generateContent(content);
+    final response = await _model.generateContent([Content.text(prompt)]);
 
     final jsonText = response.text;
     if (jsonText == null || jsonText.isEmpty) {
@@ -42,6 +43,7 @@ class GeminiService {
 
     return _parseResponse(
       jsonText: jsonText,
+      title: title,
       quizType: quizType,
       difficulty: difficulty,
       sourceText: sourceText,
@@ -49,6 +51,8 @@ class GeminiService {
   }
 
   String _buildPrompt({
+    required String title,
+    required String description,
     required String sourceText,
     required QuizType quizType,
     required Difficulty difficulty,
@@ -63,9 +67,15 @@ class GeminiService {
         'Each question must have exactly 1 answer which is the correct short answer (a few words).',
     };
 
+    final descriptionSection = description.isNotEmpty
+        ? '\nQuiz focus/instructions: $description\n'
+        : '';
+
     return '''
 You are a quiz generator. Based on the following text, generate a quiz with exactly $questionCount questions.
 
+Quiz title: $title
+$descriptionSection
 Difficulty level: ${difficulty.displayName}
 Question type: ${quizType.displayName}
 
@@ -73,7 +83,6 @@ $typeInstruction
 
 Respond with valid JSON in this exact format:
 {
-  "title": "A short descriptive title for this quiz",
   "questions": [
     {
       "text": "The question text",
@@ -93,12 +102,12 @@ $sourceText
 
   Quiz _parseResponse({
     required String jsonText,
+    required String title,
     required QuizType quizType,
     required Difficulty difficulty,
     required String sourceText,
   }) {
     final Map<String, dynamic> parsed = jsonDecode(jsonText);
-    final title = parsed['title'] as String? ?? 'Generated Quiz';
     final questionsJson = parsed['questions'] as List;
 
     final questions = questionsJson.map((q) {

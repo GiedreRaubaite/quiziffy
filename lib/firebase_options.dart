@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '529961005224',
     projectId: 'quiziffy-2bb2e',
     storageBucket: 'quiziffy-2bb2e.firebasestorage.app',
-    iosClientId: '', // TODO (setup)
-    iosBundleId: 'com.quizify.giedre', // TODO (setup)
+    iosBundleId: 'com.quizify.giedre',
   );
 }

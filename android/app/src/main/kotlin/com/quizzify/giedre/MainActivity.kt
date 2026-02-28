@@ -1,4 +1,4 @@
-package com.example.quizzify_app
+package com.quizzify.giedre
 
 import io.flutter.embedding.android.FlutterActivity
 

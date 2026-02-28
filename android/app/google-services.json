@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "529961005224",
+    "project_id": "quiziffy-2bb2e",
+    "storage_bucket": "quiziffy-2bb2e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529961005224:android:40761e8d5b5af88677129d",
+        "android_client_info": {
+          "package_name": "com.quizzify.giedre"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPPHqFTL8ZfcAN7ngrSPMTalnFT41XYGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
